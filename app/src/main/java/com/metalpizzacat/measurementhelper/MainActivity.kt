@@ -89,11 +89,6 @@ fun ComparisonComponent(
     val sheetState = rememberModalBottomSheetState()
     var currentlyEditedEntry by remember { mutableStateOf<Int?>(null) }
     Column(modifier.padding(5.dp)) {
-        var maxHeight = viewModel.heights.maxByOrNull { it.height.cm }?.height?.cm ?: 0.0
-        maxHeight += maxHeight * 0.2
-        val tickValue = 10.0 * ceil(maxHeight / 250.0)
-        val tickCount = ceil(maxHeight / tickValue).toInt()
-        Text(text = "$tickCount")
         LengthInput(accepted = {
             viewModel.heights.add(HeightChartData(it))
         })
