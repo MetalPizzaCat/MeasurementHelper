@@ -4,11 +4,11 @@ plugins {
 }
 
 android {
-    namespace = "com.metalpizzacat.measurmenthelper"
+    namespace = "com.metalpizzacat.measurementhelper"
     compileSdk = 34
 
     defaultConfig {
-        applicationId = "com.metalpizzacat.measurmenthelper"
+        applicationId = "com.metalpizzacat.measurementhelper"
         minSdk = 24
         targetSdk = 34
         versionCode = 1
@@ -56,6 +56,7 @@ dependencies {
     implementation(libs.androidx.activity.compose)
     implementation(platform(libs.androidx.compose.bom))
     implementation(libs.androidx.ui)
+    implementation(libs.androidx.lifecycle.viewmodel.compose)
     implementation(libs.androidx.ui.graphics)
     implementation(libs.androidx.ui.tooling.preview)
     implementation(libs.androidx.material3)

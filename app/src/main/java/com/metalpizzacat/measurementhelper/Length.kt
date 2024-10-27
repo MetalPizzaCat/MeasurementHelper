@@ -1,4 +1,4 @@
-package com.metalpizzacat.measurmenthelper
+package com.metalpizzacat.measurementhelper
 
 import kotlin.math.floor
 

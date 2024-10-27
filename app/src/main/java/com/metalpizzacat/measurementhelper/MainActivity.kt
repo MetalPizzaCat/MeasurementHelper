@@ -1,15 +1,18 @@
-package com.metalpizzacat.measurmenthelper
+package com.metalpizzacat.measurementhelper
 
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -23,7 +26,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.metalpizzacat.measurmenthelper.ui.theme.MeasurmentHelperTheme
+import androidx.lifecycle.viewmodel.compose.viewModel
+import com.metalpizzacat.measurementhelper.ui.theme.MeasurmentHelperTheme
 import java.util.Locale
 
 
@@ -34,10 +38,29 @@ class MainActivity : ComponentActivity() {
         setContent {
             MeasurmentHelperTheme {
                 Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-                    LengthInput(modifier = Modifier.padding(innerPadding))
+                    ComparisonComponent(modifier = Modifier.padding(innerPadding))
                 }
             }
         }
+    }
+}
+
+@Composable
+fun ComparisonComponent(
+    modifier: Modifier = Modifier,
+    viewModel: HeightViewModel = viewModel()
+) {
+    Column(modifier) {
+        LengthInput(accepted = {
+            viewModel.heights.add(HeightChartData(it))
+        })
+        HeightChart(
+            height = viewModel.heights,
+            modifier = Modifier
+                .padding(10.dp)
+                .verticalScroll(rememberScrollState())
+        )
+
     }
 }
 
@@ -76,7 +99,8 @@ fun LengthInput(modifier: Modifier = Modifier, accepted: (Length) -> Unit = {}) 
                         value = feet,
                         onValueChange = {
                             feet = it
-                            val len = Length(it.toDoubleOrNull() ?: 0.0, inch.toDoubleOrNull() ?: 0.0)
+                            val len =
+                                Length(it.toDoubleOrNull() ?: 0.0, inch.toDoubleOrNull() ?: 0.0)
                             cm = len.cm.toString()
                         },
                         keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Number)
@@ -88,7 +112,8 @@ fun LengthInput(modifier: Modifier = Modifier, accepted: (Length) -> Unit = {}) 
                         value = inch,
                         onValueChange = {
                             inch = it
-                            val len = Length(feet.toDoubleOrNull() ?: 0.0,it.toDoubleOrNull() ?: 0.0)
+                            val len =
+                                Length(feet.toDoubleOrNull() ?: 0.0, it.toDoubleOrNull() ?: 0.0)
                             cm = len.cm.toString()
                         },
                         keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Number)
@@ -97,7 +122,7 @@ fun LengthInput(modifier: Modifier = Modifier, accepted: (Length) -> Unit = {}) 
             }
 
         }
-        Button(onClick = { /*TODO*/ }, modifier = Modifier.weight(0.2f)) {
+        Button(onClick = { accepted(Length((cm.toDoubleOrNull() ?: 0.0) / 100.0)) }, modifier = Modifier.weight(0.2f)) {
             Text("Add")
         }
     }
