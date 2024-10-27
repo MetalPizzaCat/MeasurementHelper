@@ -24,10 +24,10 @@ fun HeightChart(
     barPadding: Dp = 16.dp,
     additionalHeightMultiplier: Double = 0.2,
     lineColor: Color = Color.White,
+    backgroundColor: Color = Color.DarkGray,
     showHorizontalLines: Boolean = true
 ) {
     val textMeasurer = rememberTextMeasurer()
-    val color: Color = colorResource(id = R.color.teal_200)
 
     val padding: Float = LocalDensity.current.run { barPadding.toPx() }
     val maxHeight: Double = if (height.isNotEmpty()) {
@@ -35,17 +35,19 @@ fun HeightChart(
     } else {
         180.0
     }
-    val tickCount = ceil(maxHeight / 10.0).toInt()
+    val tickValue = 10.0 * ceil(maxHeight / 250.0)
+    val tickCount = ceil(maxHeight / tickValue).toInt()
     Canvas(modifier = modifier.aspectRatio(1f)) {
+        drawRect(backgroundColor, topLeft = Offset(0f, 0f), size = size)
         if (showHorizontalLines) {
             for (i in 0..tickCount) {
-                val lineHeight: Float = (size.height * (10.0 * i) / maxHeight).toFloat()
+                val lineHeight: Float = (size.height * (tickValue * i) / maxHeight).toFloat()
                 drawText(
                     textMeasurer,
-                    "${i * 10}cm",
+                    "${i * tickValue.toInt()}cm",
                     topLeft = Offset(
                         0f,
-                        size.height - (size.height * (10.0 * (i + 1)) / maxHeight).toFloat()
+                        size.height - (size.height * (tickValue * (i)) / maxHeight).toFloat()
                     ),
                 )
                 drawLine(
@@ -60,7 +62,7 @@ fun HeightChart(
         height.forEachIndexed { i, height ->
             val barHeight = size.height * (height.height.cm / maxHeight).toFloat()
             drawRect(
-                color = color,
+                color = height.colors.color,
                 topLeft = Offset(startOffset + (barWidth + padding) * i, size.height - barHeight),
                 size = Size(barWidth, barHeight)
             )
